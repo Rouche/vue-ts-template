@@ -36,34 +36,50 @@ const defaultOptions = {
 };
 
 const defaultTemplate = `
-    <template src="./__{{path.name}}__.html">
+    <template src="__{{{src.template}}}__">
+        <div>{{ msg }} gaaaaa</div>
     </template>
 
-    <script lang="ts" src="./__{{path.name}}__.ts">
+    <script lang="ts" src="__{{{src.ts}}}__">
     </script>
 
-    <style scoped lang="scss" src="./__{{path.name}}__.scoped.scss">
+    <style scoped lang="scss" src="__{{{src.scss}}}__">
     </style>
 `;
 
 const defaultFlag = '<vue-pre-default/>';
 
+const getFileNameIfExists = (ressourcePath, type) => {
+    let filePath = Object.assign({}, ressourcePath);
+    filePath.ext = type;
+    filePath.base = undefined;
+
+    let fileName = path.format(filePath);
+    console.debug('Filename: ' + JSON.stringify(filePath));
+    console.debug('Filename: ' + fileName);
+    if(fs.existsSync(fileName)) {
+        return './' + filePath.name + filePath.ext;
+    }
+
+    return '';
+};
+
 module.exports = function (content) {
 
     let _this = this;
-    let debug = function debug(message, ...other) {
+    let debug = function debug(message, obj) {
         if(options.debug) {
             console.debug();
             console.debug('***** ' + loaderName + ' ' + message + ' *****');
             console.debug('Resource: ' + _this.resourcePath);
 
-            if(other) {
-                other.forEach(console.debug);
+            if(obj) {
+                console.debug(obj);
             }
         }
     };
 
-    _this.cacheable();
+    //_this.cacheable();
 
     let options = loaderUtils.getOptions(_this);
     options = Object.assign({}, defaultOptions, options);
@@ -71,10 +87,17 @@ module.exports = function (content) {
 
     Mustache.tags = [options.startTag,options.endTag];
 
+    let ressourcePath = path.parse(_this.resourcePath);
     let data = {
         context: _this.context,
-        path: path.parse(_this.resourcePath)
+        path: ressourcePath,
+        src: {
+            template: getFileNameIfExists(ressourcePath, '.html'),
+            ts: getFileNameIfExists(ressourcePath, '.ts'),
+            scss: getFileNameIfExists(ressourcePath, '.scoped.scss'),
+        }
     };
+
 
     let template = (options.useDefault || content === defaultFlag) ? defaultTemplate : content;
     if(options.debug) {
