@@ -6,5 +6,9 @@
   </div>
 </template>
 
-<script lang="ts" src="./home.ts">
+/**
+ * @Important
+ * Example for vue-pre-loader
+ */
+<script lang="ts" src="__{{{src.ts}}}__">
 </script>

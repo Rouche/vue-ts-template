@@ -1,4 +1,25 @@
-# test-vue
+
+
+# Solutions for Vue separation of concerns.
+
+This project is a sandbox for multiple solutions to separate template, code and style from vue files.
+
+This project uses:
+- Vue CLI 3 : https://cli.vuejs.org/
+- Webpack 4
+- TypeScript
+- Sass
+
+You can separate files in 3 way:
+- vue-template-loader: https://github.com/ktsn/vue-template-loader
+- A custom loader (vue-pre-loader)
+- Linking files with `<script lang="ts" src="./myfile.ts">`
+
+## vue-pre-loader
+
+Mustache is used to pre-process the template and change it before vue-loader.
+
+TODO Documentation
 
 ## Project setup
 ```
@@ -20,7 +41,7 @@ npm run build
 npm run lint
 ```
 
-### Cheat sheet doc
+### Cheat sheet doc and links
 - inspect final webpack config:
 
     `vue inspect > inspect.config.js`

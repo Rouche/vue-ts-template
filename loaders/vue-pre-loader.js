@@ -35,6 +35,7 @@ const defaultOptions = {
     endTag: '}}__',
 };
 
+// TODO Separate <script> and <style> and make them autodetect base on file exists
 const defaultTemplate = `
     <template src="__{{{src.template}}}__">
     </template>
