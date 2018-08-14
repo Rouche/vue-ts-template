@@ -102,7 +102,7 @@ module.exports = function (content) {
 
         let section = defaultSections[key];
 
-        // TODO extract lang from .vue section if present to provide customization and use it as extension
+        // TODO extract lang attribute from section if present, to provide customization and use it as extension
         let regExp = new RegExp('<\\s*' + key + '[^>]*>([\\S\\s]*?)<\\s*\\/\\s*' + key + '>');
         let sectionInfo = processSection(resourcePath, section);
 
