@@ -4,9 +4,20 @@ module.exports = {
 
     lintOnSave: true,
 
-    chainWebpack: function(config) {
+    configureWebpack: (config) => {
 
-        config.cache = false;
+        if (process.env.NODE_ENV === 'production') {
+            //config.mode = 'development';
+            // mutate config for production...
+        } else {
+            //config.mode = 'development';
+            // mutate for development...
+        }
+    },
+
+    chainWebpack: (config) => {
+
+        //config.cache = false;
 
         // Add our custom loaders
         config.resolveLoader.modules

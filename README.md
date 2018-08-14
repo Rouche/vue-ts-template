@@ -41,10 +41,22 @@ npm run build
 npm run lint
 ```
 
+### Debug webpack build (windows)
+
+https://webpack.js.org/contribute/debugging/
+
+Start server:
+```
+node[-nightly] --inspect-brk .\node_modules\webpack\bin\webpack.js --config .\node_modules\@vue\cli-service\webpack.config.js
+```
+Then: In chrome, enter address: chrome://inspect
+
+
 ### Cheat sheet doc and links
 - inspect final webpack config:
 
     `vue inspect > inspect.config.js`
+    
 - webpack chain:
 
     https://github.com/mozilla-neutrino/webpack-chain

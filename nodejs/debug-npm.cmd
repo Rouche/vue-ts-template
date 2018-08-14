@@ -1,0 +1,1 @@
+node --inspect --inspect-brk %APPDATA%\npm\node_modules\npm\bin\npm-cli.js run serve

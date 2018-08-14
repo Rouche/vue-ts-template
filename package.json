@@ -27,7 +27,8 @@
     "sass-loader": "^7.0.1",
     "typescript": "^3.0.0",
     "vue-template-compiler": "^2.5.17",
-    "vue-template-loader": "^1.0.0"
+    "vue-template-loader": "^1.0.0",
+    "webpack-cli": "^3.1.0"
   },
   "gitHooks": {
     "pre-commit": "lint-staged"

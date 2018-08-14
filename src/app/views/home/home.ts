@@ -12,4 +12,8 @@ import HelloMars from '@/app/components/hellomars/hellomars.vue'; // @ is an ali
 export default class Home extends Vue {
     public message: string = 'Welcome to Your Vue.js + TypeScript App';
     public message2: string = 'Mars Attack!!!';
+
+    public testClick(): void {
+        alert('WEEEEE');
+    }
 }

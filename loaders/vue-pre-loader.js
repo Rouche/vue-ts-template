@@ -35,77 +35,86 @@ const defaultOptions = {
     endTag: '}}__',
 };
 
-// TODO Separate <script> and <style> and make them autodetect base on file exists
-const defaultTemplate = `
-    <template src="__{{{src.template}}}__">
-    </template>
+const defaultSections = {
 
-    <script lang="ts" src="__{{{src.ts}}}__">
-    </script>
+    template: {
+        lang: 'html',
+        src: `
+            <template src="__{{{sections.template.src}}}__">
+            </template>`,
+        ext: '.vue.html',
+    },
 
-    <style scoped lang="scss" src="__{{{src.scss}}}__">
-    </style>
-`;
+    script: {
+        lang: 'ts',
+        src: `
+            <script lang="__{{{sections.script.lang}}}__" src="__{{{sections.script.src}}}__">
+            </script>`,
+        ext: '.ts',
+    },
 
-const getFileNameIfExists = (ressourcePath, type) => {
-    let filePath = Object.assign({}, ressourcePath);
-    filePath.ext = type;
+    style: {
+        lang: 'scss',
+        src: `
+            <style scoped lang="__{{{sections.style.lang}}}__" src="__{{{sections.style.src}}}__">
+            </style>`,
+        ext: '.scss',
+    }
+};
+
+const processSection = (resourcePath, section) => {
+    let filePath = Object.assign({}, resourcePath);
+    filePath.ext = section.ext;
     filePath.base = undefined;
 
     let fileName = path.format(filePath);
-    console.debug('Filename: ' + JSON.stringify(filePath));
-    console.debug('Filename: ' + fileName);
-    if(fs.existsSync(fileName)) {
-        return './' + filePath.name + filePath.ext;
+    let sectionInfo = {
+        lang: '',
+        src: '',
+        fileExists: fs.existsSync(fileName),
+    };
+    if(sectionInfo.fileExists) {
+        sectionInfo.src = './' + filePath.name + filePath.ext;
+        sectionInfo.lang = section.lang;
     }
 
-    return '';
+    return sectionInfo;
 };
 
 module.exports = function (content) {
 
-    let _this = this;
-    let debug = function debug(message, obj) {
-        if(options.debug) {
-            console.debug();
-            console.debug('***** ' + loaderName + ' ' + message + ' *****');
-            console.debug('Resource: ' + _this.resourcePath);
+    this.cacheable();
 
-            if(obj) {
-                console.debug(obj);
-            }
-        }
-    };
-
-    _this.cacheable();
-
-    let options = loaderUtils.getOptions(_this);
+    let options = loaderUtils.getOptions(this);
     options = Object.assign({}, defaultOptions, options);
     validateOptions(schema, options, loaderName);
 
     Mustache.tags = [options.startTag,options.endTag];
 
-    let ressourcePath = path.parse(_this.resourcePath);
-    let data = {
-        context: _this.context,
-        path: ressourcePath,
-        src: {
-            template: getFileNameIfExists(ressourcePath, '.vue.html'),
-            ts: getFileNameIfExists(ressourcePath, '.ts'),
-            scss: getFileNameIfExists(ressourcePath, '.scoped.scss'),
-        }
+    let resourcePath = path.parse(this.resourcePath);
+
+    let mustacheData = {
+        path: resourcePath,
+        sections: {},
     };
 
+    Object.keys(defaultSections).forEach( (key) => {
 
-    let template = (options.useDefault || content.trim().length === 0) ? defaultTemplate : content;
-    if(options.debug) {
-        debug('template used', template);
-    }
-    content = Mustache.render(template, data);
+        let section = defaultSections[key];
 
-    if(options.debug) {
-        debug('result', content);
-    }
+        // TODO extract lang from .vue section if present to provide customization and use it as extension
+        let regExp = new RegExp('<\\s*' + key + '[^>]*>([\\S\\s]*?)<\\s*\\/\\s*' + key + '>');
+        let sectionInfo = processSection(resourcePath, section);
 
-    return content;
+        if(sectionInfo.fileExists) {
+            if(!regExp.test(content)) {
+                content += defaultSections[key].src;
+            }
+            mustacheData.sections[key] = sectionInfo;
+        }
+    });
+
+    let result = Mustache.render(content, mustacheData);
+
+    return result;
 }
