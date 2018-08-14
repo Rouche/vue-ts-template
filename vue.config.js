@@ -1,9 +1,12 @@
 const path = require('path');
 
 module.exports = {
+
     lintOnSave: true,
 
     chainWebpack: function(config) {
+
+        config.cache = false;
 
         // Add our custom loaders
         config.resolveLoader.modules
@@ -11,10 +14,13 @@ module.exports = {
             .end();
 
         // Configure vue-template-loader
+        // @Important not compatible with <template src="./template.html">
+        // https://github.com/vuejs/vueify/issues/35
         config.module
             .rule('html')
             .test(/\.html$/)
-            .exclude.add(/index\.html/).end()
+            .exclude.add(/index\.html/)
+                .add(/\.vue\.html/).end()
             .set('loader', 'vue-template-loader')
             .set('options', {
                 scoped: false

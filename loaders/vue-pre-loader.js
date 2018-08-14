@@ -37,7 +37,6 @@ const defaultOptions = {
 
 const defaultTemplate = `
     <template src="__{{{src.template}}}__">
-        <div>{{ msg }} gaaaaa</div>
     </template>
 
     <script lang="ts" src="__{{{src.ts}}}__">
@@ -46,8 +45,6 @@ const defaultTemplate = `
     <style scoped lang="scss" src="__{{{src.scss}}}__">
     </style>
 `;
-
-const defaultFlag = '<vue-pre-default/>';
 
 const getFileNameIfExists = (ressourcePath, type) => {
     let filePath = Object.assign({}, ressourcePath);
@@ -79,7 +76,7 @@ module.exports = function (content) {
         }
     };
 
-    //_this.cacheable();
+    _this.cacheable();
 
     let options = loaderUtils.getOptions(_this);
     options = Object.assign({}, defaultOptions, options);
@@ -92,14 +89,14 @@ module.exports = function (content) {
         context: _this.context,
         path: ressourcePath,
         src: {
-            template: getFileNameIfExists(ressourcePath, '.html'),
+            template: getFileNameIfExists(ressourcePath, '.vue.html'),
             ts: getFileNameIfExists(ressourcePath, '.ts'),
             scss: getFileNameIfExists(ressourcePath, '.scoped.scss'),
         }
     };
 
 
-    let template = (options.useDefault || content === defaultFlag) ? defaultTemplate : content;
+    let template = (options.useDefault || content.trim().length === 0) ? defaultTemplate : content;
     if(options.debug) {
         debug('template used', template);
     }
