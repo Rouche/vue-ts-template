@@ -39,13 +39,10 @@ module.exports = {
             .end();
 
         // Add custom loader to be able to pre-process *.vue files
-        config.module
-            .rule('vue')
-            .use('vue-pre-loader')
-            .loader('vue-pre-loader')
-            .options({
-                debug: true
-            })
-            .end();
+		config.module
+			.rule('vue')
+			.use('vue-auto-tmpl-loader')
+			.loader('@rouche/vue-auto-tmpl-loader')
+			.end();
     }
 }
